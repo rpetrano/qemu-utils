@@ -1,0 +1,15 @@
+service qemu_swap
+{
+	type			= UNLISTED
+	socket_type		= stream
+	protocol		= tcp
+	only_from		= 10.3.1.3
+	bind			= 10.3.1.2
+	port			= 666
+	wait			= no
+	instances		= 1
+	cps				= 1 1
+	user			= icewootra
+	server			= /home/icewootra/projects/qemu-utils/bin/both.sh
+	disable			= no
+}
