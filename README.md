@@ -1,1 +1,1 @@
-KVM switch.
+Software KVM switch.
