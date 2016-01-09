@@ -1,12 +1,14 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+Capslock::ScrollLock
 
 class Config
 {
    static sHost := "10.3.1.2"
    static iPort := 666
+   static iSleep := 200
 
    static DEBUG := 0
    static WSAVersion := (2<<8) | 2 ; version 2.2
@@ -32,7 +34,7 @@ class Offset
       static ai_addr      := A_Is64bitOS ? 32 : 24
       static ai_next      := A_Is64bitOS ? 40 : 28
    }
-
+   
    class sockaddr_in
    {
       static sin_family := 0
@@ -107,7 +109,7 @@ GetError(iErrorId:=-1)
 
    if (iResult == 0)
       return iErrorId
-
+   
    return sMessage
 }
 
@@ -168,7 +170,7 @@ CreateSocket(pAddrinfo)
    iFamily   := NumGet(pAddrinfo + 0, Offset.addrinfo.ai_family)
    iSockType := NumGet(pAddrinfo + 0, Offset.addrinfo.ai_socktype)
    iProtocol := NumGet(pAddrinfo + 0, Offset.addrinfo.ai_protocol)
-
+ 
    iSocket := DllCallCheck("Ws2_32\socket", "Int", iFamily, "Int", iSockType, "Int", iProtocol)
    if (iSocket < 0)
    {
@@ -199,6 +201,7 @@ Connect(iSocket, pAddrinfo)
 
 Main()
 {
+   Sleep, Config.iSleep
    WSAStartup()
 
    pAddrinfo := ResolveName(Config.sHost, Config.iPort)
